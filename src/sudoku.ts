@@ -5,8 +5,29 @@ function solveSudoku(table: number[][]) {
 }
 
 function generateSudoku(): number[][] {
-  const emptySudoku = Array(9).fill(null).map(() => Array(9).fill(0));
-  const filledSudoku = solveSudoku(emptySudoku);
+  const baseSudoku = Array(9).fill(null).map(() => Array(9).fill(0));
+
+  for(let b = 0; b < 3; b++) {
+    let randArray: number[] = [1,2,3,4,5,6,7,8,9];
+    for(let i = 0; i < 9; i++){
+      const random = Math.floor(Math.random() * 9);
+      const [temp] = randArray.splice(i, 1);
+      randArray = [
+        ...randArray.slice(0, random),
+        temp,
+        ...randArray.slice(random)
+      ];
+    }
+
+    for(let i = 0 + 3*b; i < 3 + 3*b; i++) {
+      for(let j = 0 + 3*b; j < 3 + 3*b; j++) {
+        baseSudoku[i][j] = randArray.pop();
+      }
+    }
+  }
+
+
+  const filledSudoku = solveSudoku(baseSudoku);
   
   // Eliminar algunos números para crear el puzzle
   for (let i = 0; i < 40; i++) {
