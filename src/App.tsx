@@ -152,7 +152,7 @@ function App() {
           <div className='user-interface'>
   <div className='number-select'>
     {[1, 2, 3, 4, 5].map(num => (
-      <button key={num} onClick={() => handleNumberSelect(num)}>{num}</button>
+      <button className={selectedNumber == num ? 'selected' : ''} key={num} onClick={() => handleNumberSelect(num)}>{num}</button>
     ))}
     <button className='icon-button' onClick={handleGenerate}>
       <i className="fas fa-file-alt"></i>
@@ -160,9 +160,9 @@ function App() {
   </div>
   <div className='number-select'>
     {[6, 7, 8, 9].map(num => (
-      <button key={num} onClick={() => handleNumberSelect(num)}>{num}</button>
+      <button className={selectedNumber == num ? 'selected' : ''} key={num} onClick={() => handleNumberSelect(num)}>{num}</button>
     ))}
-    <button className='icon-button' onClick={handleErase}>
+    <button className={'icon-button' + (selectedNumber == 0 ? ' selected' : '')} onClick={handleErase}>
       <i className="fas fa-eraser"></i>
     </button>
     <button className='icon-button' onClick={handleSolve}>

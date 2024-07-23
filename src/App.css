@@ -125,6 +125,10 @@ button:active {
     transition: all 0.3s ease;
 }
 
+.selected {
+    background-color: #EA8545;
+}
+
 .solve:hover, .eraser:hover, .generate:hover {
     transform: scale(1.05);
 }
