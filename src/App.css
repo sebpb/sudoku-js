@@ -79,9 +79,16 @@ body {
 }
 
 .number-select {
+    /* make div contain 6 elements above and 6 below */
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    background-color: #746844;
     margin: auto;
-    width: fit-content;
+    width: max-content;
     text-align: center;
+    padding: 10px;
+    border-radius: 12px;
+    gap: 10px;
 }
 
 button {
@@ -112,9 +119,8 @@ button:active {
     width: 60px;
     height: 60px;
     flex-basis: 16.666666666%;
-    border-radius: 100%;
+    border-radius: 12px;
     font-size: 40px;
-    margin: 5px;
 }
 
 .solve, .eraser, .generate {
@@ -133,7 +139,11 @@ button:active {
     transform: scale(1.05);
 }
 
-.sudoku-number.filled {
+.sudoku-number.fixed {
+    pointer-events: none;
+}
+
+.sudoku-number.playable {
     color: #EA8545;
 }
 

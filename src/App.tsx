@@ -3,13 +3,17 @@ import { solveSudoku, generateSudoku } from './sudoku';
 import './App.css'
 
 function App() {
-  const [table, setTable] = useState(generateSudoku());
+  const [table, setTable] = useState(generateSudoku().map(row => row.map(num => {return {number: num, fixed: num !== 0 ? true : false}})));
   const [selectedNumber, setSelectedNumber] = useState<number | null>(null);
 
   const handleCellClick = (row: number, col: number) => {
-    if (selectedNumber !== null) {
-      const newTable = [...table];
-      newTable[row][col] = selectedNumber;
+    if (selectedNumber !== null && !table[row][col].fixed) {
+      const newTable = table.map((tRow, iRow) => tRow.map((num, iNum) => {
+        if (iRow === row && iNum === col) {
+          return {number: selectedNumber, fixed: false};
+        }
+        return num;
+      }));
       setTable(newTable);
     }
   };
@@ -23,19 +27,21 @@ function App() {
   };
 
   const handleGenerate = () => {
-    setTable(generateSudoku());
+    setTable(generateSudoku().map(row => row.map(num => {return {number: num, fixed: num !== 0 ? true : false}})));
+    setSelectedNumber(null);
   };
 
   const handleSolve = () => {
-    setTable(solveSudoku(table));
+    setTable(solveSudoku(table.map(row => row.map(cell => cell.number))));
+    setSelectedNumber(null);
   };
 
   const renderCell = (row: number, col: number) => (
     <div 
-      className={`sudoku-number ${table[row][col] !== 0 ? 'filled' : ''}`}
+      className={`sudoku-number ${table[row][col].fixed ? 'fixed' : 'playable'}`}
       onClick={() => handleCellClick(row, col)}
     >
-      {table[row][col] || ''}
+      {table[row][col].number || ''}
     </div>
   );
 
@@ -157,8 +163,6 @@ function App() {
     <button className='icon-button' onClick={handleGenerate}>
       <i className="fas fa-file-alt"></i>
     </button>
-  </div>
-  <div className='number-select'>
     {[6, 7, 8, 9].map(num => (
       <button className={selectedNumber == num ? 'selected' : ''} key={num} onClick={() => handleNumberSelect(num)}>{num}</button>
     ))}
