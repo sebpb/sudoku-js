@@ -3,6 +3,7 @@ import { generateSudoku, solveSudoku } from './sudoku';
 import './App.css'
 
 function App() {
+  const [difficulty, setDifficulty] = useState(0); //0, 1, 2, 3 represets easty, medium, hard, expert
   const [table, setTable] = useState(generateSudoku().map(row => row.map(num => {return {number: num, fixed: num !== 0 ? true : false, isValid: true}})));
   const [selectedNumber, setSelectedNumber] = useState<number | null>(null);
   const [isCompleted, setIsCompleted] = useState(false);
@@ -71,7 +72,7 @@ function App() {
   };
 
   const handleGenerate = () => {
-    setTable(generateSudoku().map(row => 
+    setTable(generateSudoku(difficulty).map(row => 
       row.map(num => ({
         number: num,
         fixed: num !== 0 ? true : false,
