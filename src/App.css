@@ -9,7 +9,7 @@ body {
 }
 
 .main-card {
-    background-color: #191919;
+    background-color: #746844;
     width: 800px;
     margin: auto;
     margin-top: 60px;
@@ -20,21 +20,22 @@ body {
 }
 
 .main-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0px 15px #554e39;
+    transform: translateY(-2px);
+    box-shadow: 0px 12px #554e39;
 }
 
 .sudoku-table {
-    background-color: #A49463;
+    background-color: #554e39;
     margin: auto;
     display: flex;
     flex-direction: row;
     width: 600px;
     height: fit-content;
-    border: 3px solid black;
+    border: 3px solid #191919;
     padding: 2px;
-    border-radius: 10px;
+    border-radius: 12px;
     overflow: hidden;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
 }
 
 .column {
@@ -45,33 +46,39 @@ body {
 }
 
 .sudoku-box {
-    background-color: #191919;
+    background-color: #746844;
     display: flex;
     flex-wrap: wrap;
     height: 200px;
     margin: 1px;
+    border-radius: 4px;
 }
 
 .sudoku-number {
     user-select: none;
     color: white;
-    font-size: 3em;
+    font-size: 2.5em;
     line-height: 64px;
     text-align: center;
     flex: 0 0 33.33333333333%;
-    border: 1px solid #797663;
+    background-color: #A49463;
+    border: 1px solid #746844;
     height: 33.3333333%;
     transition: all 0.2s ease;
     cursor: pointer;
+    box-shadow: 0 2px #554e39;
 }
 
 .sudoku-number:hover {
-    background-color: #2c2c2c;
+    background-color: #b5a574;
+    transform: translateY(-1px);
+    box-shadow: 0 3px #554e39;
 }
 
 .sudoku-number:active {
     background-color: #EA8545;
-    transform: scale(0.95);
+    transform: translateY(2px);
+    box-shadow: 0 0 #554e39;
 }
 
 .user-interface {
@@ -79,16 +86,16 @@ body {
 }
 
 .number-select {
-    /* make div contain 6 elements above and 6 below */
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    background-color: #746844;
+    background-color: #554e39;
     margin: auto;
     width: max-content;
     text-align: center;
     padding: 10px;
     border-radius: 12px;
     gap: 10px;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
 }
 
 button {
@@ -98,55 +105,78 @@ button {
     font-weight: bold;
     font-size: 20px;
     border: none;
+    border-radius: 12px;
     box-shadow: 0 5px #554e39;
     transition: all 0.2s ease;
 }
 
 button:hover {
-    background-color: #EA8545;
-    box-shadow: 0 5px #4d392d;
+    background-color: #b5a574;
     transform: translateY(-2px);
+    box-shadow: 0 7px #554e39;
 }
 
 button:active {
-    background-color: #554e39;
-    transform: translate(0px, 5px);
+    background-color: #EA8545;
+    transform: translateY(5px);
     box-shadow: none;
 }
 
-.number-select>* {
+.number-select > * {
     margin: auto;
     width: 60px;
     height: 60px;
     flex-basis: 16.666666666%;
-    border-radius: 12px;
     font-size: 40px;
-}
-
-.solve, .eraser, .generate {
-    width: 150px;
-    height: 150px;
-    background-size: cover;
-    background-position: center;
-    transition: all 0.3s ease;
 }
 
 .selected {
     background-color: #EA8545;
+    box-shadow: 0 5px #a65f31;
 }
 
-.solve:hover, .eraser:hover, .generate:hover {
-    transform: scale(1.05);
+.selected:hover {
+    box-shadow: 0 7px #a65f31;
 }
 
 .sudoku-number.fixed {
+    color: #191919;
+    background-color: #b5a574;
+    font-weight: bold;
     pointer-events: none;
+    box-shadow: none;
 }
 
 .sudoku-number.playable {
-    color: #EA8545;
+    color: white;
 }
 
 .icon-button i {
     font-size: 35px;
+}
+
+.sudoku-number.invalid {
+    background-color: #c25c5c;
+    color: white;
+    box-shadow: 0 2px #8b4040;
+}
+
+.sudoku-number.invalid:hover {
+    background-color: #d46868;
+    box-shadow: 0 3px #8b4040;
+}
+
+.sudoku-number.completed {
+    background-color: #68b168;
+    color: white;
+    box-shadow: 0 2px #4a7e4a;
+}
+
+.main-card.completed {
+    background-color: #4a7e4a;
+}
+
+.sudoku-number.completed:hover {
+    background-color: #79c279;
+    box-shadow: 0 3px #4a7e4a;
 }

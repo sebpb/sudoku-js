@@ -1,19 +1,63 @@
-import { useState } from 'react'
-import { solveSudoku, generateSudoku } from './sudoku';
+import { useState } from 'react';
+import { generateSudoku, solveSudoku } from './sudoku';
 import './App.css'
 
 function App() {
-  const [table, setTable] = useState(generateSudoku().map(row => row.map(num => {return {number: num, fixed: num !== 0 ? true : false}})));
+  const [table, setTable] = useState(generateSudoku().map(row => row.map(num => {return {number: num, fixed: num !== 0 ? true : false, isValid: true}})));
   const [selectedNumber, setSelectedNumber] = useState<number | null>(null);
+  const [isCompleted, setIsCompleted] = useState(false);
+
+  const isValidMove = (row: number, col: number, num: number): boolean => {
+    // Check row
+    for (let i = 0; i < 9; i++) {
+      if (i !== col && table[row][i].number === num) return false;
+    }
+    
+    // Check column
+    for (let i = 0; i < 9; i++) {
+      if (i !== row && table[i][col].number === num) return false;
+    }
+    
+    // Check 3x3 box
+    const boxRow = Math.floor(row / 3) * 3;
+    const boxCol = Math.floor(col / 3) * 3;
+    for (let i = boxRow; i < boxRow + 3; i++) {
+      for (let j = boxCol; j < boxCol + 3; j++) {
+        if (i !== row && j !== col && table[i][j].number === num) return false;
+      }
+    }
+    
+    return true;
+  };
+
+  const checkBoardCompletion = (newTable: typeof table): boolean => {
+    // Check if all cells are filled and valid
+    for (let i = 0; i < 9; i++) {
+      for (let j = 0; j < 9; j++) {
+        if (newTable[i][j].number === 0 || !newTable[i][j].isValid) {
+          return false;
+        }
+      }
+    }
+    return true;
+  };
 
   const handleCellClick = (row: number, col: number) => {
     if (selectedNumber !== null && !table[row][col].fixed) {
-      const newTable = table.map((tRow, iRow) => tRow.map((num, iNum) => {
-        if (iRow === row && iNum === col) {
-          return {number: selectedNumber, fixed: false};
+      const newTable = table.map((tRow, iRow) => tRow.map((cell, iCol) => {
+        if (iRow === row && iCol === col) {
+          const isValid = selectedNumber === 0 ? true : isValidMove(row, col, selectedNumber);
+          return {
+            number: selectedNumber,
+            fixed: false,
+            isValid
+          };
         }
-        return num;
+        return cell;
       }));
+      
+      const completed = checkBoardCompletion(newTable);
+      setIsCompleted(completed);
       setTable(newTable);
     }
   };
@@ -27,27 +71,50 @@ function App() {
   };
 
   const handleGenerate = () => {
-    setTable(generateSudoku().map(row => row.map(num => {return {number: num, fixed: num !== 0 ? true : false}})));
+    setTable(generateSudoku().map(row => 
+      row.map(num => ({
+        number: num,
+        fixed: num !== 0 ? true : false,
+        isValid: true
+      }))
+    ));
     setSelectedNumber(null);
+    setIsCompleted(false);
   };
 
   const handleSolve = () => {
-    setTable(solveSudoku(table.map(row => row.map(cell => cell.number))));
+    const solvedNumbers = solveSudoku(table.map(row => row.map(cell => cell.number)));
+    const newTable = table.map((row, i) => 
+      row.map((cell, j) => ({
+        number: solvedNumbers[i][j],
+        fixed: cell.fixed,
+        isValid: true
+      }))
+    );
+    setTable(newTable);
     setSelectedNumber(null);
+    setIsCompleted(true);
   };
 
-  const renderCell = (row: number, col: number) => (
-    <div 
-      className={`sudoku-number ${table[row][col].fixed ? 'fixed' : 'playable'}`}
-      onClick={() => handleCellClick(row, col)}
-    >
-      {table[row][col].number || ''}
-    </div>
-  );
+  const renderCell = (row: number, col: number) => {
+    const cell = table[row][col];
+    const cellClassName = `sudoku-number ${cell.fixed ? 'fixed' : 'playable'} ${
+      !cell.isValid ? 'invalid' : ''
+    } ${isCompleted ? 'completed' : ''}`;
+
+    return (
+      <div 
+        className={cellClassName}
+        onClick={() => handleCellClick(row, col)}
+      >
+        {cell.number || ''}
+      </div>
+    );
+  };
 
   return (
     <>
-      <div className="main-card">
+      <div className={`main-card ${isCompleted ? 'completed' : ''}`}>
         <div className="sudoku-table">
           <div className='column'>
             <div className="sudoku-box">
@@ -154,29 +221,44 @@ function App() {
               {renderCell(8, 8)}
             </div>
           </div>
+        </div>
+        <div className='user-interface'>
+          <div className='number-select'>
+            {[1, 2, 3, 4, 5].map(num => (
+              <button 
+                className={selectedNumber === num ? 'selected' : ''} 
+                key={num} 
+                onClick={() => handleNumberSelect(num)}
+              >
+                {num}
+              </button>
+            ))}
+            <button className='icon-button' onClick={handleGenerate}>
+              <i className="fas fa-file-alt"></i>
+            </button>
+            {[6, 7, 8, 9].map(num => (
+              <button 
+                className={selectedNumber === num ? 'selected' : ''} 
+                key={num} 
+                onClick={() => handleNumberSelect(num)}
+              >
+                {num}
+              </button>
+            ))}
+            <button 
+              className={'icon-button' + (selectedNumber === 0 ? ' selected' : '')} 
+              onClick={handleErase}
+            >
+              <i className="fas fa-eraser"></i>
+            </button>
+            <button className='icon-button' onClick={handleSolve}>
+              <i className="fas fa-pencil-alt"></i>
+            </button>
           </div>
-          <div className='user-interface'>
-  <div className='number-select'>
-    {[1, 2, 3, 4, 5].map(num => (
-      <button className={selectedNumber == num ? 'selected' : ''} key={num} onClick={() => handleNumberSelect(num)}>{num}</button>
-    ))}
-    <button className='icon-button' onClick={handleGenerate}>
-      <i className="fas fa-file-alt"></i>
-    </button>
-    {[6, 7, 8, 9].map(num => (
-      <button className={selectedNumber == num ? 'selected' : ''} key={num} onClick={() => handleNumberSelect(num)}>{num}</button>
-    ))}
-    <button className={'icon-button' + (selectedNumber == 0 ? ' selected' : '')} onClick={handleErase}>
-      <i className="fas fa-eraser"></i>
-    </button>
-    <button className='icon-button' onClick={handleSolve}>
-      <i className="fas fa-pencil-alt"></i>
-    </button>
-  </div>
-</div>
+        </div>
       </div>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
